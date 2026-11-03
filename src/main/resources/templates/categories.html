@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1 th:text="'Your IP address is: ' + ${ipAddress}"></h1>
+
+<ul>
+    <li th:each="category : ${categories}">
+        <h2 th:text="${category.getName()} + ' - ' + ${category.getDescription()} "></h2>
+    </li>
+</ul>
+
+<div th:if="${errorMessage != null}">
+    <p th:text="${errorMessage}" style="color: red;"></p>
+</div>
+<form method="post" action="/servlet/category">
+    <input name= "name" placeholder="Name...">
+    <input name= "description" placeholder="Description...">
+    <button>Add</button>
+</form>
+</body>
+</html>
