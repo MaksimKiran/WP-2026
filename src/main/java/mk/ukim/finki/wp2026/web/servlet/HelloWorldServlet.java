@@ -30,7 +30,7 @@ public class HelloWorldServlet extends HttpServlet {
         String name = req.getParameter("name");
         String surname = req.getParameter("surname");
         if (name == null) name = "X";
-        if (surname == null) surname = "X";
+        if (surname == null) surname = "Y";
 
         context.setVariable(name="name", name);
         context.setVariable(surname="surname", surname);
