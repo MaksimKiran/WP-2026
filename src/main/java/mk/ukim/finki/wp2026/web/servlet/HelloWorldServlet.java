@@ -33,7 +33,7 @@ public class HelloWorldServlet extends HttpServlet {
         if (surname == null) surname = "X";
 
         context.setVariable(name="name", name);
-        context.setVariable(name="surname", surname);
+        context.setVariable(surname="surname", surname);
 
         springTemplateEngine.process("hello.html", context, resp.getWriter());
     }

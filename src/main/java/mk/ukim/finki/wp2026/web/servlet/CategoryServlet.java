@@ -28,8 +28,14 @@ public class CategoryServlet extends HttpServlet {
         IWebExchange webExchange = JakartaServletWebApplication
                 .buildApplication(getServletContext())
                 .buildExchange(req, resp);
-
+        // resets each request
         WebContext context = new WebContext(webExchange);
+        // resets when the app stops
+        Integer userViews = (Integer) getServletContext().getAttribute("userViews");
+        userViews = userViews + 1;
+        getServletContext().setAttribute("userViews", userViews);
+
+        context.setVariable("userViews", userViews);
         context.setVariable("categories", categoryService.listCategories());
         context.setVariable("errorMessage", req.getParameter("errorMessage"));
         context.setVariable("ipAddress", req.getRemoteAddr());

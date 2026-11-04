@@ -21,7 +21,7 @@ public class DataHolder {
 
         users = new ArrayList<>();
         users.add(new User("elena.atanasoska", "ea", "Elena", "Atanasoska"));
-        users.add(new User("darko.sasanski", "ds", "Darsko", "Sasanski"));
+        users.add(new User("darko.sasanski", "ds", "Darko", "Sasanski"));
         users.add(new User("bojana.marojevikj", "bm", "Bojana", "Marojevikj"));
     }
 }

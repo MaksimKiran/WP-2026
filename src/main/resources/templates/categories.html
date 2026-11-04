@@ -6,6 +6,13 @@
 </head>
 <body>
 <h1 th:text="'Your IP address is: ' + ${ipAddress}"></h1>
+<th:block th:if="${session.user}">
+    <h2>Info about user</h2>
+    <div th:text="${session.user.username}"></div>
+    <div th:text="${session.user.name}"></div>
+    <div th:text="${session.user.surname}"></div>
+    <a th:href="@{/logout}">Logout</a>
+</th:block>
 
 <ul>
     <li th:each="category : ${categories}">
@@ -16,6 +23,7 @@
 <div th:if="${errorMessage != null}">
     <p th:text="${errorMessage}" style="color: red;"></p>
 </div>
+<div th:text="${userViews?:0}"></div>
 <form method="post" action="/servlet/category">
     <input name= "name" placeholder="Name...">
     <input name= "description" placeholder="Description...">
