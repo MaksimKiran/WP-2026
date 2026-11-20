@@ -1,0 +1,145 @@
+IGNORE THE FOLLOWING QUESTIONS:
+
+10.png
+11.png 
+4.png
+
+NOTES:
+
+5.png:
+Attributes se objekti koi serverot gi vnesuva, parametri se stringovi koi userot gi vnesuva. Ima metodot addAttribute ili setAttribute no nema metod setParameter pa zatoa atributi mozhe da se menuvaat vo filtri no parametri ne mozhat. Atributi se vnesuvaat vo modelot pa se del od MVC shablonot
+
+6.png:
+Pri .forward(req, resp) se prenesuvaat parametrite, session atributite i request atributtie. Forward e edno isto baranje, redirect kreira posebno baranje. So redirect ne bi imale pristap do stvarive, osven do session-ot bidejki ima kolache za toa. Za da zhiveat podatocite niz redirect koristime flash attribute.
+
+7.png:
+Vo request se chuva se shto e potrebno za eden request, ne podolgo od toa. Samo search results vazhi.
+
+8.png:
+Singleton 
+Singleton: se kreira eden i se koristi cela aplikacija.
+Prototype: se kreira eden sekoj pat koga e potreben
+Request: se kreira eden za sekoe baranje
+Session: se kreira eden za sekoja sesija
+Application: se kreira eden za sekoj ServletContext (1 aplikacija = 1 servlet kontekst)
+
+9.png:
+Bidejki e obichen Controller, mora da se vrati html strana (view) iako e post method. Se dodavaat prefiskot i sufiksot od view-resolver. Da beshe RestController, tochen odgovor ke beshe deka nema da se selektira nitu edna datoteka, ke se generira samo JSON.
+
+12.png:
+PATCH e HTTP metod kako GET i POST. Slichen e mnogu so PUT, so toa shto PUT gi zamenuva SITE polinja od teloto a PUT zamenuva samo nekoi. Anyway:
+
+professorId e vo header i mora da se chita so RequestHeader. Header ima standardni polinja no mozhe i da ima custom polinja kako ova (nema nishto special za header-ot samo sodrzhi name:value parovi, mozhesh sho sakash da pikash).
+slotId e vo patekata pa za nego treba PathVariable.
+Date mora da e so required=false bidejki e optional parametar.
+
+13.png:
+-Header e zaglavje vo HTTP baranje, ne postoi vo sesija.
+-@Header ne postoi kako anotacija, samo @RequestHeader
+-Request =/= header
+-d e tochno
+-Context =/= header
+
+14.png:
+-Ne smee da se ima prashalnici vo mapping toa e glupost, odgovorite a,b,c otpagjaat
+-Kontrolerot e vekje mapiran na /exam pa ne smee mapping povtorno da sodrzhi exam. Primerot d bi rabotel za pateka http://localhost:8080/exam/exam/answer/{id} (dva pati exam). Tochnen odgovor: e
+
+15.png:
+-User popolnuva neshto i prakja. Vo html-ot obichno stoi action="@{path}" i method=GET ili POST ili whatever. Ako nema action togash baranjeto se prakja do istiot URL kako momentalnata strana odnosno nema promena vo URL, a ako nema method togash default baranje e GET. Anyway, Spring od ovie informacii znae na koj kontroler da gi isprati podatocite odnosno na koj metod od toj kontroler. Dokolku postojat filtri, URL-ot ke pomine niz filtrite i mozhebi ke se promeni dokolku se sovpagja so urlPatterns vo anotacijata @WebFilter). Vo sekoj sluchaj ide prvo niz filterot pa potoa ke se dade na kontrolerot. Vo kontrolerot se vrshi biznis logika od servis slojot, servis slojot se povikuva na repozitorum slojot. Final:
+
+Fitler -> Web (Controller) -> Service -> Repositorium
+
+16.jpg:
+-Gi nemame site ponudeni odgovori. Bitno e URL-ot da zavrshuva na /d2 posho tamu e mapiran servletot, assuming deka baranjeto e GET i nema filtri shto ke go soprat.
+- session.setAttribute("size", 100) ke go apdejtira postoechkiot atribut size. Da go krstevme size2 ke kreirashe skroz nov attribute.
+- context.setAttribute("page", new Date()) ke raboti, tipot na objekt ne e biten, Spring nikad ne proveruva, ova isto ke go prepokrie postoechkiot atribut page.
+- context.setAttribute("count", 10) sozdava nov attribute so ime count i vrednost 10.
+- session.getAttribute("size") ja vrakja vrednosta na atributot so ime size, ova mora da se kastira vo tipot shto go sakame, tuka bi se kastiralo so int ili long.
+- config.setAttribute("day", 100) NEMA da raboti, bidejki ne postoi metod setAttribute vo ServletConfig objekti. Nema ni getAttribute. Config se koristi za CHITANJE INIT PARAMETR. Gi ima slednite metodi:
+ * getInitParameter(String name) 
+ * getInitParameterNames
+ * getServletName()
+ * getServletContext().
+
+Posledno baranje:
+
+Client2:
+get d2 -> day=100, page=30, size=15
+get d1 -> day=200, page=30, size=15
+get d2 -> day=100, page=40, size=20
+
+Client1:
+get d1 -> day=200, page=40, size=10 (sesiski atribut, zatoa se resetira na 10. poseben za sekoj korisnik).
+get d2 -> day=100, page=50, size=15
+
+Tehnicki vo zadachata count nikade ne e postaveno pa ke si bide null. Page sekogash se inkrementira bidejki kontekstnite promenlivi se spodeleni za site servleti. Na kraj:
+
+count = null, size = 15, day = 100, page = 50
+
+17.jpg:
+-Isto kako minatata zadacha so dodatok na web.config. config.getInitParameter("b") raboti bidejki imame promenliva so ime b i vrednost 20 vo web.config, znachi ke ni vrati 20 ovoj metod.
+-Povtorno, config nema metod setAttribute().
+
+Pochetni vrednosti:
+
+@WebInitParameter: a = 5 vo s1 ili 10 vo s2
+Context parameter: b = 20
+Session attribute: c = 30
+Context attribute: d = 40
+
+Client2:
+get s1 -> a = 5, b = 20, c = 40, d = 60
+
+Client1:
+get s2 -> a = 10, b = 20, c = 30, d = 60
+get s1 -> a = 5, b = 20, c = 40, d = 80
+
+Final za Client1: a = 5, b = 20, c = 40, d = 80
+
+18.png:
+-Prvo da sogledame razlika pomegju polinja vo Request i Response:
+
+HTTP Request:
+-Prvata linija e {METHOD} + {URL PATH} + {HTTP VERSION}
+-Posle imame headers / zaglavja kako Host, Cookie, Referer, Content-type, no isto taka mozhe da ima custom headers
+-NEKOGASH ima body vo request (ako metodot e POST, PUT ili PATCH). 
+
+HTTP Response:
+-Prvata linija e {HTTP VERSION} + {STATUS CODE}
+-Posle imame headers kako Server, Location, Set-Cookie, Content-Type, no isto taka mozhe da ima custom headers
+-RECHISI SEKOGASH ima body vo response, obichno HTML-ot koj browser-ot ko crta ili JSON.
+
+Okej, znachi ovoj POST REQUEST ke lichi vaka:
+
+Method = POST,
+URL PATH = /api/events
+HTTP Version = HTTP1.1 (vekje popolneto)
+Header (custom, non-standard): creatorId (znaeme deka e vo zaglavjeto bidejki ima @RequestHeader vo metodot createEvent())
+Content-Type = application/x-www-form-urlencoded. Ova e najchest format za podatoci prateni preku form od html. Najchesto Content-Type e ili ova ili JSON.
+^^^Tuka mozheshe komotno da stoi Content-Length, bidejki toa zaglavje e prisutno i vo request i vo response dokolku imame popolento body, no tuka nemame ponuden odgovor shto e numerichka vrednost.
+
+Sleduva Body. Imame 6 promenlivi vo metodot od koj eden e Header attribute, znachi ostanuvaat 5, 2 od niv ne se required ama shtom imame 4 prazni mesta znachi eden od tie 2 e definitivno prisuten. Ideme po redosled spored parametrite na funkcijata createEvent:
+location
+day_of_week (ova i slednoto ne se required, ama mora da e day of week, posho za ova ima navedeno numericka vrednost 2, a za slednoto bi trebalo da ima string shto mozhe da se kastira vo LocalDate objekt)
+start bidejki e zadolzitelen parametar i vrednosta gledame deka e vo ISO format
+to bidejki e zadolzitelen parametar i vrednosta gledame deka e vo ISO format
+
+Posledniot del e greshen. Model NEMAME NIKADE, duri koga koristime model vrakjame STRING koj se resolve-nuva vo view (nekoj od nashite HTML fajlovi), tuka se vrakja objekt od klasa Event znachi nema vrska so Model. Ne znaeme ni koja strana ke se prikazhe, ni kako se vika atributot vo modelot (posho ne ni imame model), ni koja e vrednosta na toj atribut. Znachi ova se treba prazno da se ostavi.
+
+19.jpg:
+-Servleti po default se loaded lazily. Toa znachi deka servletot se loadnuva pri prviot negov povik, zatoa prv e servlet 2, bidejki negovoto baranje prvo stignuva.
+Sekoj servlet koga e loaded mu se izvrshuva init() metodot. Potoa se vrshi doPost() za servlet2. Potoa istiot redosled vazhi za servlet 1, so toa shto samo ednash e napishano doGet(), iako po pravilo se izvrshuvaat dva povici na ovoj metod. Rachunaj deka za vtoriot doGet() ne bi se povikalo povtorno init(), toa se sluchuva samo ednash. Pri undeploy se povikuva destroy() na sekoj servlet, so toa shto ne e garantirano deka servletite se brishat po redosledot po koj se kreirani, taka da se prifakja bilo koj redosled na unishtuvanje se dodeka unishtuvanjata se posledni vo redosledot na nastani. Servlet 3 nikogash ne e loadiran pa zatoa ne e ni prisuten vo redosledot.
+
+20.png:
+
+
+
+
+
+
+
+
+
+
+
+
